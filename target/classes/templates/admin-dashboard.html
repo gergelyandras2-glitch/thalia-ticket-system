@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: html-head('Adminisztrációs Vezérlőpult')}"></head>
+<body>
+
+<header th:replace="~{fragments :: navbar}"></header>
+
+<main class="container">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h2 style="font-family: var(--font-serif); color: #0f172a; margin-bottom: 0.25rem;">Színházi Adminisztrációs Vezérlőpult</h2>
+            <p style="color: #64748b;">Értékesítési statisztikák, nézőtéri telítettség és előadások kezelése (FR-07, FR-08)</p>
+        </div>
+        <div>
+            <a th:href="@{/admin/performances/new}" class="btn btn-gold">
+                ➕ Új Előadás Meghirdetése
+            </a>
+        </div>
+    </div>
+
+    <!-- Flash message alerts -->
+    <div th:if="${successMessage}" class="alert alert-success">
+        <span>✅</span>
+        <span th:text="${successMessage}"></span>
+    </div>
+
+    <!-- Statistics Cards Grid -->
+    <section class="stats-grid">
+        <div class="stat-card" style="border-left-color: #22c55e;">
+            <div class="stat-label">Összes Értékesített Bevétel</div>
+            <div class="stat-value" style="color: #15803d;" th:text="${#numbers.formatDecimal(stats.totalRevenue, 0, 'POINT', 0, 'COMMA')} + ' Ft'">0 Ft</div>
+        </div>
+
+        <div class="stat-card" style="border-left-color: #3b82f6;">
+            <div class="stat-label">Sikeres Foglalások Száma</div>
+            <div class="stat-value" style="color: #1d4ed8;" th:text="${stats.totalBookings} + ' db'">0 db</div>
+        </div>
+
+        <div class="stat-card" style="border-left-color: #f59e0b;">
+            <div class="stat-label">Eladott Belépőjegyek</div>
+            <div class="stat-value" style="color: #b45309;" th:text="${stats.totalTicketsSold} + ' db'">0 db</div>
+        </div>
+
+        <div class="stat-card" style="border-left-color: #831843;">
+            <div class="stat-label">Nézőtéri Telítettség</div>
+            <div class="stat-value" style="color: #831843;" th:text="${stats.overallOccupancyRate} + ' %'">0 %</div>
+        </div>
+    </section>
+
+    <!-- Bookings Table -->
+    <section>
+        <h3 style="font-family: var(--font-serif); margin-bottom: 1rem; color: #0f172a;">Legutóbbi Tranzakciók és Foglalások</h3>
+
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Foglalási Kód</th>
+                        <th>Vásárló Neve</th>
+                        <th>E-mail</th>
+                        <th>Időpont</th>
+                        <th>Jegyek Száma</th>
+                        <th>Összeg</th>
+                        <th>Státusz</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(bookings)}">
+                        <td colspan="7" style="text-align: center; color: #94a3b8; padding: 2rem;">Még nincsenek rögzített foglalások.</td>
+                    </tr>
+                    <tr th:each="b : ${bookings}">
+                        <td>
+                            <strong style="font-family: 'Consolas', monospace; color: #831843;" th:text="${b.bookingCode}">THX-...</strong>
+                        </td>
+                        <td th:text="${b.customerName}">Kovács János</td>
+                        <td th:text="${b.customerEmail}">janos@example.hu</td>
+                        <td th:text="${b.getFormattedBookingTime()}">2026.11.17. 12:00</td>
+                        <td>
+                            <span th:text="${#lists.size(b.tickets)} + ' db'">2 db</span>
+                        </td>
+                        <td>
+                            <strong th:text="${#numbers.formatDecimal(b.totalAmount, 0, 'POINT', 0, 'COMMA')} + ' Ft'">9 000 Ft</strong>
+                        </td>
+                        <td>
+                            <span th:if="${b.status.name() == 'CONFIRMED'}" style="background: #dcfce7; color: #166534; font-weight: 600; padding: 0.25rem 0.6rem; border-radius: 12px; font-size: 0.8rem;">
+                                Érvényes
+                            </span>
+                            <span th:if="${b.status.name() == 'CANCELLED'}" style="background: #fee2e2; color: #991b1b; font-weight: 600; padding: 0.25rem 0.6rem; border-radius: 12px; font-size: 0.8rem;">
+                                Lemondva
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>

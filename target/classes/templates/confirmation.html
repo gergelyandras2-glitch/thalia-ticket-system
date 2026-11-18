@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: html-head('Sikeres Jegyvásárlás')}"></head>
+<body>
+
+<header th:replace="~{fragments :: navbar}"></header>
+
+<main class="container" style="max-width: 800px; text-align: center; padding: 3rem 1.5rem;">
+
+    <div style="font-size: 4rem; color: #22c55e; margin-bottom: 1rem;">🎉</div>
+    <h2 style="font-family: var(--font-serif); font-size: 2.2rem; color: #0f172a; margin-bottom: 0.5rem;">
+        Köszönjük a vásárlást!
+    </h2>
+    <p style="color: #64748b; font-size: 1.1rem; margin-bottom: 2rem;">
+        A jegyvásárlási tranzakció sikeresen befejeződött. A digitális belépőjegyeket kiállítottuk.
+    </p>
+
+    <div class="card" style="text-align: left; padding: 2.5rem; margin-bottom: 2rem; border-top: 4px solid var(--gold);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <span style="font-size: 0.85rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Foglalási Azonosító:</span>
+                <div style="font-size: 1.6rem; font-weight: 700; color: #831843; font-family: 'Consolas', monospace;" th:text="${booking.bookingCode}">THX-12345678</div>
+            </div>
+            <div style="text-align: right;">
+                <span style="font-size: 0.85rem; color: #64748b; text-transform: uppercase;">Státusz:</span>
+                <div>
+                    <span style="background: #dcfce7; color: #166534; font-weight: 600; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem;" th:text="${booking.status.displayName}">Véglegesített</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; font-size: 0.95rem;">
+            <div>
+                <p><strong>Vásárló neve:</strong> <span th:text="${booking.customerName}"></span></p>
+                <p><strong>E-mail cím:</strong> <span th:text="${booking.customerEmail}"></span></p>
+                <p><strong>Telefonszám:</strong> <span th:text="${booking.customerPhone}"></span></p>
+            </div>
+            <div>
+                <p><strong>Vásárlás időpontja:</strong> <span th:text="${booking.getFormattedBookingTime()}"></span></p>
+                <p><strong>Összes kifizetett összeg:</strong> <span style="font-weight: 700; color: #831843;" th:text="${#numbers.formatDecimal(booking.totalAmount, 0, 'POINT', 0, 'COMMA')} + ' Ft'"></span></p>
+            </div>
+        </div>
+
+        <h3 style="font-family: var(--font-serif); font-size: 1.2rem; color: #0f172a; margin-bottom: 1rem;">
+            Kiállított E-jegyek (<span th:text="${#lists.size(booking.tickets)}"></span> db):
+        </h3>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div th:each="ticket : ${booking.tickets}" style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem 1.25rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <strong style="color: #0f172a;" th:text="${ticket.performanceSeat.performance.title}">Előadás</strong> &mdash; 
+                    <span th:text="${ticket.performanceSeat.getSeatLabel()}">Szék</span>
+                    <div style="font-size: 0.8rem; color: #64748b; font-family: 'Consolas', monospace;">
+                        Jegykód: <span th:text="${ticket.ticketCode}">TKT-...</span>
+                    </div>
+                </div>
+                <div>
+                    <a th:href="@{/tickets/{code}(code=${ticket.ticketCode})}" target="_blank" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                        🎟️ E-jegy megnyitása / Nyomtatás
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: center; gap: 1rem;">
+        <a th:href="@{/performances}" class="btn btn-primary">&larr; Vissza a műsorfüzethez</a>
+        <button onclick="window.print()" class="btn btn-outline">🖨️ Nyugta nyomtatása</button>
+    </div>
+
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>

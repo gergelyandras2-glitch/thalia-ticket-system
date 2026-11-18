@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="html-head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' - Thália Nemzeti Színház'">Thália Nemzeti Színház</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header th:fragment="navbar" class="navbar">
+    <div class="nav-container">
+        <a th:href="@{/performances}" class="brand">
+            <span class="brand-icon">🎭</span>
+            <div class="brand-text">
+                <h1>Thália Nemzeti Színház</h1>
+                <p>Jegyértékesítő Portál</p>
+            </div>
+        </a>
+        <nav>
+            <ul class="nav-links">
+                <li><a th:href="@{/performances}">Műsorfüzet</a></li>
+                <li><a th:href="@{/tickets/lookup}">Jegykezelés / Lemondás</a></li>
+                <li><a th:href="@{/admin}" class="nav-btn">⚙️ Admin Vezérlőpult</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<footer th:fragment="footer" class="footer">
+    <div class="footer-content">
+        <div>
+            <h4 style="color: #fef08a; font-family: var(--font-serif); margin-bottom: 0.5rem;">Thália Nemzeti Színház</h4>
+            <p>1065 Budapest, Nagymező utca 22-24.</p>
+            <p>Telefon: +36 (1) 331-0500 | E-mail: jegyiroda@thalia-szinhaz.hu</p>
+        </div>
+        <div>
+            <h5 style="color: white; margin-bottom: 0.5rem;">Nyitvatartás</h5>
+            <p>Hétfő - Péntek: 10:00 - 18:00</p>
+            <p>Hétvégén az előadások előtt 2 órával</p>
+        </div>
+        <div>
+            <h5 style="color: white; margin-bottom: 0.5rem;">Online Jegyértékesítés</h5>
+            <p>Biztonságos tranzakciók, azonnali E-jegy kiállítás.</p>
+            <p><small style="color: #64748b;">RFT Feladat - 2026</small></p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        &copy; 2026 Thália Nemzeti Színház Jegyértékesítő Rendszer. Minden jog fenntartva.
+    </div>
+</footer>
+
+</body>
+</html>

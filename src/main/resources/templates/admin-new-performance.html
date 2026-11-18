@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: html-head('Új Előadás Meghirdetése')}"></head>
+<body>
+
+<header th:replace="~{fragments :: navbar}"></header>
+
+<main class="container" style="max-width: 750px;">
+
+    <a th:href="@{/admin}" class="btn btn-outline" style="margin-bottom: 1.5rem;">&larr; Vissza a vezérlőpultra</a>
+
+    <div class="card" style="padding: 2.5rem; border-top: 4px solid var(--gold);">
+        <h2 style="font-family: var(--font-serif); margin-bottom: 0.5rem; color: #0f172a;">Új Színházi Előadás Rögzítése</h2>
+        <p style="color: #64748b; margin-bottom: 2rem;">
+            A mentést követően a rendszer automatikusan legenerálja a teremhez tartozó nézőtéri székeket a szektor-besorolásokkal együtt (FR-07).
+        </p>
+
+        <!-- Flash error message -->
+        <div th:if="${errorMessage}" class="alert alert-danger">
+            <span>⚠️</span>
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <form th:action="@{/admin/performances/new}" th:object="${performanceDto}" method="post">
+
+            <div class="form-group">
+                <label for="title">Színdarab Címe *</label>
+                <input type="text" id="title" th:field="*{title}" class="form-control" placeholder="pl. Hamlet">
+                <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="form-error"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="author">Szerző / Rendező *</label>
+                <input type="text" id="author" th:field="*{author}" class="form-control" placeholder="pl. William Shakespeare">
+                <div th:if="${#fields.hasErrors('author')}" th:errors="*{author}" class="form-error"></div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="genre">Műfaj *</label>
+                    <input type="text" id="genre" th:field="*{genre}" class="form-control" placeholder="pl. Dráma, Vígjáték, Musical">
+                    <div th:if="${#fields.hasErrors('genre')}" th:errors="*{genre}" class="form-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="hallId">Játszóterem *</label>
+                    <select id="hallId" th:field="*{hallId}" class="form-control" style="background: white;">
+                        <option th:each="h : ${halls}" th:value="${h.id}" th:text="${h.name} + ' (' + ${h.totalCapacity} + ' férőhely)'"></option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('hallId')}" th:errors="*{hallId}" class="form-error"></div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="dateTime">Előadás Időpontja *</label>
+                    <input type="datetime-local" id="dateTime" th:field="*{dateTime}" class="form-control">
+                    <div th:if="${#fields.hasErrors('dateTime')}" th:errors="*{dateTime}" class="form-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="basePrice">Alap Jegyár (Ft) *</label>
+                    <input type="number" id="basePrice" th:field="*{basePrice}" class="form-control" placeholder="4500" min="500" step="100">
+                    <div th:if="${#fields.hasErrors('basePrice')}" th:errors="*{basePrice}" class="form-error"></div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="durationMinutes">Időtartam (perc)</label>
+                    <input type="number" id="durationMinutes" th:field="*{durationMinutes}" class="form-control" value="120">
+                </div>
+
+                <div class="form-group">
+                    <label for="imageUrl">Plakát / Kép URL</label>
+                    <input type="url" id="imageUrl" th:field="*{imageUrl}" class="form-control" placeholder="https://images.unsplash.com/...">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Szinopszis / Ismertető</label>
+                <textarea id="description" th:field="*{description}" class="form-control" rows="4" placeholder="A darab rövid bemutatása, témája és érdekességei..."></textarea>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-gold" style="flex: 1; padding: 0.9rem;">
+                    💾 Előadás Mentése és Székek Generálása
+                </button>
+                <a th:href="@{/admin}" class="btn btn-outline" style="padding: 0.9rem 1.5rem;">Mégse</a>
+            </div>
+
+        </form>
+    </div>
+
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>
