@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: html-head('Rendelés és Fizetés')}"></head>
+<body>
+
+<header th:replace="~{fragments :: navbar}"></header>
+
+<main class="container" style="max-width: 900px;">
+
+    <a th:href="@{/bookings/select-seats/{id}(id=${performance.id})}" class="btn btn-outline" style="margin-bottom: 1.5rem;">&larr; Vissza az ülésválasztáshoz</a>
+
+    <h2 style="font-family: var(--font-serif); margin-bottom: 1.5rem; color: #0f172a;">Jegyvásárlás Véglegesítése</h2>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+
+        <!-- Order Summary Column -->
+        <div class="card" style="padding: 2rem;">
+            <h3 style="font-family: var(--font-serif); color: #831843; margin-bottom: 1rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">
+                Megrendelés Összegzése
+            </h3>
+
+            <p style="font-size: 1.2rem; font-weight: 700; color: #0f172a;" th:text="${performance.title}">Előadás Címe</p>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;" th:text="${performance.author}">Szerző</p>
+
+            <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.9rem;">
+                <p><strong>📅 Időpont:</strong> <span th:text="${performance.getFormattedDate()}"></span></p>
+                <p><strong>🏛️ Helyszín:</strong> <span th:text="${performance.hall.name}"></span></p>
+            </div>
+
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem; color: #334155;">Kiválasztott ülőhelyek:</h4>
+            <div style="border-top: 1px solid var(--border); margin-bottom: 1.5rem;">
+                <div th:each="seat : ${selectedSeats}" style="display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px dashed var(--border); font-size: 0.9rem;">
+                    <div>
+                        <strong th:text="${seat.sector.displayName}">Szektor</strong><br>
+                        <span style="color: #64748b;" th:text="${seat.rowNumber} + '. sor ' + ${seat.seatNumber} + '. szék'"></span>
+                    </div>
+                    <div style="font-weight: 600; color: #831843;" th:text="${#numbers.formatDecimal(seat.calculatePrice(), 0, 'POINT', 0, 'COMMA')} + ' Ft'">
+                        4 500 Ft
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 1.3rem; font-weight: 700; border-top: 2px solid var(--border); padding-top: 1rem;">
+                <span>Összesen:</span>
+                <span style="color: #831843;" th:text="${#numbers.formatDecimal(totalAmount, 0, 'POINT', 0, 'COMMA')} + ' Ft'">0 Ft</span>
+            </div>
+        </div>
+
+        <!-- Checkout Form Column -->
+        <div class="card" style="padding: 2rem;">
+            <h3 style="font-family: var(--font-serif); color: #0f172a; margin-bottom: 1rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem;">
+                Vásárló Adatai
+            </h3>
+
+            <form th:action="@{/bookings/confirm-order}" th:object="${bookingRequest}" method="post">
+                <input type="hidden" th:field="*{performanceId}">
+                
+                <!-- Hidden inputs for seat IDs -->
+                <th:block th:each="sid : ${bookingRequest.seatIds}">
+                    <input type="hidden" name="seatIds" th:value="${sid}">
+                </th:block>
+
+                <div class="form-group">
+                    <label for="customerName">Teljes Név *</label>
+                    <input type="text" id="customerName" th:field="*{customerName}" class="form-control" placeholder="pl. Minta János">
+                    <div th:if="${#fields.hasErrors('customerName')}" th:errors="*{customerName}" class="form-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="customerEmail">E-mail Cím (erre küldjük az E-jegyet) *</label>
+                    <input type="email" id="customerEmail" th:field="*{customerEmail}" class="form-control" placeholder="pl. janos.minta@example.hu">
+                    <div th:if="${#fields.hasErrors('customerEmail')}" th:errors="*{customerEmail}" class="form-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="customerPhone">Telefonszám *</label>
+                    <input type="tel" id="customerPhone" th:field="*{customerPhone}" class="form-control" placeholder="pl. +36 30 123 4567">
+                    <div th:if="${#fields.hasErrors('customerPhone')}" th:errors="*{customerPhone}" class="form-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Fizetési Mód</label>
+                    <select class="form-control" style="background: white;">
+                        <option value="CARD">💳 Bankkártyás fizetés (OTP SimplePay / Stripe)</option>
+                        <option value="SZEP">🏖️ SZÉP Kártya (Szabadidő alszámla)</option>
+                        <option value="CASH">🏛️ Személyes átvétel és fizetés a színház jegypénztárában</option>
+                    </select>
+                </div>
+
+                <div style="margin: 1.5rem 0; font-size: 0.8rem; color: #64748b;">
+                    <label style="display: flex; gap: 0.5rem; align-items: flex-start; cursor: pointer;">
+                        <input type="checkbox" checked required style="margin-top: 3px;">
+                        <span>Elfogadom a Színház Általános Szerződési Feltételeit és az Adatvédelmi Tájékoztatót (GDPR).</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-gold" style="width: 100%; padding: 0.9rem; font-size: 1.05rem;">
+                    Fizetés és Jegykiállítás &rarr;
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>
