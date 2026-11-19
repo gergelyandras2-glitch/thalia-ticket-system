@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: html-head('Műsorfüzet')}"></head>
+<body>
+
+<header th:replace="~{fragments :: navbar}"></header>
+
+<section class="hero">
+    <h2>Üdvözöljük a Thália Nemzeti Színházban!</h2>
+    <p>Élje át a színház varázsát: klasszikus drámák, kortárs vígjátékok és látványos musicalek a legnevesebb művészekkel.</p>
+</section>
+
+<main class="container">
+
+    <!-- Flash message alerts -->
+    <div th:if="${successMessage}" class="alert alert-success">
+        <span>✅</span>
+        <span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <span>⚠️</span>
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <!-- Filter & Search Bar -->
+    <section class="filter-card">
+        <form th:action="@{/performances}" method="get" class="filter-form">
+            <input type="text" name="query" th:value="${selectedQuery}" placeholder="Keresés darab címére vagy szerzőre..." class="search-input">
+            
+            <select name="genre" class="genre-select">
+                <option value="ALL" th:selected="${selectedGenre == 'ALL'}">Minden műfaj</option>
+                <option th:each="g : ${genres}" th:value="${g}" th:text="${g}" th:selected="${selectedGenre == g}"></option>
+            </select>
+
+            <button type="submit" class="btn btn-primary">🔍 Keresés</button>
+            <a th:href="@{/performances}" class="btn btn-outline">Visszaállítás</a>
+        </form>
+    </section>
+
+    <!-- Performances Grid -->
+    <section>
+        <div th:if="${#lists.isEmpty(performances)}" style="text-align: center; padding: 4rem 1rem;">
+            <p style="font-size: 1.2rem; color: #64748b;">Nem található előadás a megadott keresési feltételekkel.</p>
+            <a th:href="@{/performances}" class="btn btn-primary" style="margin-top: 1rem;">Minden előadás mutatása</a>
+        </div>
+
+        <div class="grid" th:unless="${#lists.isEmpty(performances)}">
+            <div class="card" th:each="perf : ${performances}">
+                <div class="card-img-wrapper">
+                    <img th:src="${perf.imageUrl != null and !perf.imageUrl.isEmpty() ? perf.imageUrl : 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=800&q=80'}" 
+                         th:alt="${perf.title}" class="card-img">
+                    <span class="card-badge" th:text="${perf.genre}">Műfaj</span>
+                </div>
+                <div class="card-body">
+                    <span class="card-author" th:text="${perf.author}">Szerző</span>
+                    <h3 class="card-title" th:text="${perf.title}">Előadás Címe</h3>
+                    <p class="card-desc" th:text="${perf.description}">Leírás</p>
+
+                    <div class="card-meta">
+                        <div class="card-meta-item">
+                            <span>📅</span>
+                            <strong th:text="${perf.getFormattedDate()}">Időpont</strong>
+                        </div>
+                        <div class="card-meta-item">
+                            <span>🏛️</span>
+                            <span th:text="${perf.hall.name} + ' (' + ${perf.durationMinutes} + ' perc)'">Terem</span>
+                        </div>
+                        <div class="card-meta-item">
+                            <span>🎟️</span>
+                            <span th:text="${perf.getAvailableSeatsCount()} + ' szabad ülőhely elérhető'">Helyek</span>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="card-price">
+                            <span th:text="${#numbers.formatDecimal(perf.basePrice, 0, 'POINT', 0, 'COMMA')} + ' Ft-tól'">4 500 Ft-tól</span>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a th:href="@{/performances/{id}(id=${perf.id})}" class="btn btn-outline" style="padding: 0.6rem 0.9rem; font-size: 0.85rem;">Ismertető</a>
+                            <a th:href="@{/bookings/select-seats/{id}(id=${perf.id})}" class="btn btn-gold" style="padding: 0.6rem 1.1rem; font-size: 0.85rem;">Jegyvásárlás</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>
