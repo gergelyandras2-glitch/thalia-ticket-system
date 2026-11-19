@@ -1,0 +1,142 @@
+<mxfile host="app.diagrams.net" modified="2026-11-17T12:00:00.000Z" agent="Mozilla/5.0" version="24.0.0">
+  <diagram id="sequence-diagram" name="Szinhaz Jegyrendszer Szekvenciadiagram">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Lifelines -->
+        <mxCell id="ll_user" value="Vásárló (User)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#DBEAFE;strokeColor=#1D4ED8;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="40" width="120" height="660" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ll_ctrl" value="BookingController" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#FEF3C7;strokeColor=#D97706;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="40" width="140" height="660" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ll_serv" value="BookingService" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#DCFCE7;strokeColor=#16A34A;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="450" y="40" width="130" height="660" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ll_repo" value="Seat &amp; Ticket Repos" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#EDE9FE;strokeColor=#7C3AED;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="660" y="40" width="140" height="660" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ll_db" value="Database (H2/SQL)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#F3F4F6;strokeColor=#4B5563;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="870" y="40" width="130" height="660" as="geometry" />
+        </mxCell>
+
+        <!-- Messages -->
+        <!-- 1: User selects seats and clicks purchase -->
+        <mxCell id="m1" value="1: POST /bookings/checkout (seatIds, customerInfo)" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#1D4ED8;strokeWidth=1.5;" edge="1" parent="1" source="ll_user" target="ll_ctrl">
+          <mxGeometry y="10" relative="1" as="geometry">
+            <mxPoint x="120" y="110" as="sourcePoint" />
+            <mxPoint x="310" y="110" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 2: Controller invokes Service -->
+        <mxCell id="m2" value="2: createBooking(bookingRequest)" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#D97706;strokeWidth=1.5;" edge="1" parent="1" source="ll_ctrl" target="ll_serv">
+          <mxGeometry y="10" relative="1" as="geometry">
+            <mxPoint x="310" y="140" as="sourcePoint" />
+            <mxPoint x="515" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 3: Service begins transaction and locks seats -->
+        <mxCell id="m3" value="3: @Transactional: findByIdInWithLock(seatIds)" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#16A34A;strokeWidth=1.5;" edge="1" parent="1" source="ll_serv" target="ll_repo">
+          <mxGeometry y="10" relative="1" as="geometry">
+            <mxPoint x="515" y="180" as="sourcePoint" />
+            <mxPoint x="730" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 4: Repo executes SELECT FOR UPDATE -->
+        <mxCell id="m4" value="4: SELECT * FROM seats WHERE id IN (...) FOR UPDATE" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#7C3AED;strokeWidth=1.5;" edge="1" parent="1" source="ll_repo" target="ll_db">
+          <mxGeometry y="10" relative="1" as="geometry">
+            <mxPoint x="730" y="210" as="sourcePoint" />
+            <mxPoint x="935" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 5: DB returns locked rows -->
+        <mxCell id="m5" value="5: Locked seat rows returned" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;strokeColor=#4B5563;" edge="1" parent="1" source="ll_db" target="ll_repo">
+          <mxGeometry y="10" relative="1" as="geometry">
+            <mxPoint x="935" y="240" as="sourcePoint" />
+            <mxPoint x="730" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 6: Repo returns seats to service -->
+        <mxCell id="m6" value="6: Return List&lt;PerformanceSeat&gt;" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;strokeColor=#7C3AED;" edge="1" parent="1" source="ll_repo" target="ll_serv">
+          <mxGeometry y="10" relative="1" as="geometry">
+            <mxPoint x="730" y="270" as="sourcePoint" />
+            <mxPoint x="515" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 7: Validation self call -->
+        <mxCell id="m7" value="7: validateSeatsAreFree(seats)" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#16A34A;" edge="1" parent="1">
+          <mxGeometry x="0.05" y="10" relative="1" as="geometry">
+            <mxPoint x="515" y="300" as="sourcePoint" />
+            <mxPoint x="515" y="330" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="550" y="300" />
+              <mxPoint x="550" y="330" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 8: Change seats status to SOLD and save booking -->
+        <mxCell id="m8" value="8: save(Booking) + save(Tickets) + update(Seats.status=SOLD)" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#16A34A;strokeWidth=1.5;" edge="1" parent="1" source="ll_serv" target="ll_repo">
+          <mxGeometry y="10" relative="1" as="geometry">
+            <mxPoint x="515" y="370" as="sourcePoint" />
+            <mxPoint x="730" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 9: Commit DB -->
+        <mxCell id="m9" value="9: INSERT &amp; UPDATE queries, COMMIT" style="html=1;verticalAlign=bottom;endArrow=block;strokeColor=#7C3AED;strokeWidth=1.5;" edge="1" parent="1" source="ll_repo" target="ll_db">
+          <mxGeometry y="10" relative="1" as="geometry">
+            <mxPoint x="730" y="400" as="sourcePoint" />
+            <mxPoint x="935" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 10: DB ACK -->
+        <mxCell id="m10" value="10: Transaction Committed" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;strokeColor=#4B5563;" edge="1" parent="1" source="ll_db" target="ll_repo">
+          <mxGeometry y="10" relative="1" as="geometry">
+            <mxPoint x="935" y="430" as="sourcePoint" />
+            <mxPoint x="730" y="430" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 11: Repo ACK -->
+        <mxCell id="m11" value="11: Saved Booking with Tickets" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;strokeColor=#7C3AED;" edge="1" parent="1" source="ll_repo" target="ll_serv">
+          <mxGeometry y="10" relative="1" as="geometry">
+            <mxPoint x="730" y="460" as="sourcePoint" />
+            <mxPoint x="515" y="460" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 12: Return to controller -->
+        <mxCell id="m12" value="12: return BookingResponse(bookingCode, ticketCodes)" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;strokeColor=#16A34A;" edge="1" parent="1" source="ll_serv" target="ll_ctrl">
+          <mxGeometry y="10" relative="1" as="geometry">
+            <mxPoint x="515" y="490" as="sourcePoint" />
+            <mxPoint x="310" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- 13: Redirect and render confirmation -->
+        <mxCell id="m13" value="13: Redirect to /bookings/confirm?code=... (Render E-Ticket)" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;strokeColor=#1D4ED8;" edge="1" parent="1" source="ll_ctrl" target="ll_user">
+          <mxGeometry y="10" relative="1" as="geometry">
+            <mxPoint x="310" y="530" as="sourcePoint" />
+            <mxPoint x="120" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

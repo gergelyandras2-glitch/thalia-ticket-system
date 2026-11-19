@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: html-head('Nézőtér és Székválasztás')}"></head>
+<body>
+
+<header th:replace="~{fragments :: navbar}"></header>
+
+<main class="container">
+
+    <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <a th:href="@{/performances/{id}(id=${performance.id})}" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; margin-bottom: 0.5rem;">&larr; Vissza az adatlaphoz</a>
+            <h2 style="font-family: var(--font-serif); color: #0f172a;" th:text="${performance.title}">Előadás Címe</h2>
+            <p style="color: #64748b; font-size: 0.95rem;">
+                📅 <span th:text="${performance.getFormattedDate()}"></span> | 
+                🏛️ <span th:text="${performance.hall.name}"></span>
+            </p>
+        </div>
+        <div style="text-align: right;">
+            <span style="font-size: 0.85rem; color: #64748b;">Alapjegyár:</span>
+            <div style="font-size: 1.4rem; font-weight: 700; color: #831843;" th:text="${#numbers.formatDecimal(performance.basePrice, 0, 'POINT', 0, 'COMMA')} + ' Ft'"></div>
+        </div>
+    </div>
+
+    <!-- Error message alert -->
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <span>⚠️</span>
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <div class="seat-booking-layout">
+
+        <!-- Auditorium View -->
+        <div class="auditorium-card">
+            
+            <div class="stage">
+                SZÍNPAD / STAGE
+            </div>
+
+            <!-- Seat Legend -->
+            <div class="seat-legend">
+                <div class="legend-item">
+                    <div class="legend-box seat-FREE"></div>
+                    <span>Szabad</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box seat-SELECTED"></div>
+                    <span>Kiválasztva</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box seat-SOLD"></div>
+                    <span>Foglalt / Eladva</span>
+                </div>
+                <div class="legend-item" style="margin-left: 1rem; border-left: 1px solid var(--border); padding-left: 1rem;">
+                    <span style="font-weight: 600;">Szektorok:</span>
+                    <span style="color: #22c55e;">● Zsöllye (1.0x)</span>
+                    <span style="color: #3b82f6;">● Erkély (1.2x)</span>
+                    <span style="color: #eab308;">● Páholy (1.6x)</span>
+                </div>
+            </div>
+
+            <!-- Seating Grid -->
+            <div class="seats-grid">
+                <!-- Group seats by row -->
+                <div th:each="rowNum : ${#numbers.sequence(1, performance.hall.rowsCount)}" class="seat-row">
+                    <div class="row-label" th:text="${rowNum} + '. sor'">1. sor</div>
+                    
+                    <th:block th:each="seat : ${seats}" th:if="${seat.rowNumber == rowNum}">
+                        <button type="button"
+                                th:class="'seat seat-btn seat-' + ${seat.status}"
+                                th:title="${seat.sectorDisplayName} + ' | ' + ${seat.rowNumber} + '. sor ' + ${seat.seatNumber} + '. szék (' + ${#numbers.formatDecimal(seat.price, 0, 'POINT', 0, 'COMMA')} + ' Ft)'"
+                                th:disabled="${seat.status.name() != 'FREE'}"
+                                th:data-id="${seat.id}"
+                                th:data-row="${seat.rowNumber}"
+                                th:data-num="${seat.seatNumber}"
+                                th:data-sector-name="${seat.sectorDisplayName}"
+                                th:data-price="${seat.price}"
+                                th:data-status="${seat.status}"
+                                th:text="${seat.seatNumber}">
+                            1
+                        </button>
+                    </th:block>
+                </div>
+            </div>
+
+            <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 2rem;">
+                Tipp: Kattintson a szabad ülőhelyekre a kijelöléshez. A rendszer a kiválasztott helyeket azonnal hozzáadja a kosarához.
+            </p>
+
+        </div>
+
+        <!-- Order Summary Sidebar -->
+        <aside class="booking-sidebar">
+            <h3>Kiválasztott jegyek</h3>
+            
+            <div id="selected-seats-list" class="selected-seats-list">
+                <!-- Populated by seats.js -->
+            </div>
+
+            <div class="summary-total">
+                <span>Fizetendő összeg:</span>
+                <span id="total-price-display" style="color: #831843;">0 Ft</span>
+            </div>
+
+            <form th:action="@{/bookings/checkout-prep}" method="post" id="checkout-form">
+                <input type="hidden" name="performanceId" th:value="${performance.id}">
+                <div id="hidden-seat-inputs">
+                    <!-- Populated dynamically with selected seat IDs -->
+                </div>
+
+                <button type="submit" id="checkout-btn" class="btn btn-gold" style="width: 100%; padding: 0.9rem;" disabled>
+                    Tovább a fizetéshez &rarr;
+                </button>
+            </form>
+
+            <div style="margin-top: 1.5rem; font-size: 0.8rem; color: #64748b; line-height: 1.5;">
+                <p>🔒 <strong>Biztonságos foglalás:</strong> A kiválasztott székek a fizetés megkezdésekor zárolásra kerülnek a kettős foglalás kizárásával.</p>
+            </div>
+        </aside>
+
+    </div>
+
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+<script th:src="@{/js/seats.js}"></script>
+</body>
+</html>
