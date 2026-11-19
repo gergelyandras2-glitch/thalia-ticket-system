@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: html-head('Jegykezelés és Lemondás')}"></head>
+<body>
+
+<header th:replace="~{fragments :: navbar}"></header>
+
+<main class="container" style="max-width: 800px;">
+
+    <h2 style="font-family: var(--font-serif); margin-bottom: 0.5rem; color: #0f172a;">Jegykezelés és Lemondás</h2>
+    <p style="color: #64748b; margin-bottom: 2rem;">
+        Keresse meg korábbi vásárlását a foglalási azonosító és az e-mail cím megadásával az E-jegyek újbóli letöltéséhez vagy visszaváltásához.
+    </p>
+
+    <!-- Flash message alerts -->
+    <div th:if="${successMessage}" class="alert alert-success">
+        <span>✅</span>
+        <span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger">
+        <span>⚠️</span>
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <!-- Search Form Card -->
+    <div class="card" style="padding: 2rem; margin-bottom: 2.5rem;">
+        <form th:action="@{/tickets/lookup}" method="get" style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: flex-end;">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="code">Foglalási Azonosító *</label>
+                <input type="text" id="code" name="code" th:value="${searchedCode}" class="form-control" placeholder="pl. THX-DEMO-01" required>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="email">Vásárláskor megadott E-mail</label>
+                <input type="email" id="email" name="email" th:value="${searchedEmail}" class="form-control" placeholder="pl. kovacs.andras@example.hu">
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="height: 44px;">
+                🔍 Keresés
+            </button>
+        </form>
+    </div>
+
+    <!-- Found Booking Details -->
+    <div th:if="${foundBooking != null}" class="card" style="padding: 2.5rem; border-top: 4px solid var(--primary);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <span style="font-size: 0.85rem; color: #64748b; text-transform: uppercase;">Foglalási kód:</span>
+                <h3 style="color: #831843; font-family: 'Consolas', monospace; font-size: 1.5rem;" th:text="${foundBooking.bookingCode}">THX-...</h3>
+            </div>
+            <div>
+                <span th:if="${foundBooking.status.name() == 'CONFIRMED'}" style="background: #dcfce7; color: #166534; font-weight: 600; padding: 0.4rem 0.9rem; border-radius: 20px;">
+                    ✅ Érvényes Foglalás
+                </span>
+                <span th:if="${foundBooking.status.name() == 'CANCELLED'}" style="background: #fee2e2; color: #991b1b; font-weight: 600; padding: 0.4rem 0.9rem; border-radius: 20px;">
+                    ❌ Lemondva / Visszaváltva
+                </span>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; font-size: 0.95rem;">
+            <div>
+                <p><strong>Vásárló neve:</strong> <span th:text="${foundBooking.customerName}"></span></p>
+                <p><strong>E-mail:</strong> <span th:text="${foundBooking.customerEmail}"></span></p>
+                <p><strong>Telefon:</strong> <span th:text="${foundBooking.customerPhone}"></span></p>
+            </div>
+            <div>
+                <p><strong>Vásárlás ideje:</strong> <span th:text="${foundBooking.getFormattedBookingTime()}"></span></p>
+                <p><strong>Végösszeg:</strong> <span style="font-weight: 700; color: #831843;" th:text="${#numbers.formatDecimal(foundBooking.totalAmount, 0, 'POINT', 0, 'COMMA')} + ' Ft'"></span></p>
+            </div>
+        </div>
+
+        <h4 style="font-family: var(--font-serif); margin-bottom: 1rem; color: #0f172a;">Jegyek a rendelésben:</h4>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem;">
+            <div th:each="t : ${foundBooking.tickets}" style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                <div>
+                    <strong th:text="${t.performanceSeat.performance.title}">Darab</strong> &mdash; 
+                    <span th:text="${t.performanceSeat.getSeatLabel()}">Szék</span>
+                    <div style="font-size: 0.8rem; color: #64748b;">
+                        Jegykód: <span style="font-family: 'Consolas', monospace;" th:text="${t.ticketCode}"></span> | Ár: <span th:text="${#numbers.formatDecimal(t.price, 0, 'POINT', 0, 'COMMA')} + ' Ft'"></span>
+                    </div>
+                </div>
+                <div>
+                    <a th:if="${foundBooking.status.name() == 'CONFIRMED'}" th:href="@{/tickets/{code}(code=${t.ticketCode})}" target="_blank" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+                        🎟️ E-jegy Megtekintése
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cancellation Action -->
+        <div th:if="${foundBooking.status.name() == 'CONFIRMED'}" style="border-top: 1px solid var(--border); padding-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <p style="font-size: 0.85rem; color: #64748b;">
+                    Meggondolta magát? A jegyeket az előadás kezdete előtt lemondhatja, ekkor a székek felszabadulnak.
+                </p>
+            </div>
+            <form th:action="@{/bookings/cancel}" method="post" onsubmit="return confirm('Biztosan le szeretné mondani a teljes foglalást? A művelet nem visszavonható, a lefoglalt székek újra szabaddá válnak.');">
+                <input type="hidden" name="bookingCode" th:value="${foundBooking.bookingCode}">
+                <input type="hidden" name="customerEmail" th:value="${foundBooking.customerEmail}">
+                <button type="submit" class="btn btn-danger">
+                    🚫 Jegy Visszaváltása / Lemondás
+                </button>
+            </form>
+        </div>
+    </div>
+
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>

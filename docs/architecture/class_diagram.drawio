@@ -1,0 +1,66 @@
+<mxfile host="app.diagrams.net" modified="2026-11-17T12:00:00.000Z" agent="Mozilla/5.0" version="24.0.0">
+  <diagram id="class-diagram" name="Szinhaz Jegyrendszer Osztalydiagram">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- TheaterHall -->
+        <mxCell id="c_hall" value="TheaterHall&#xa;--&#xa;- id: Long&#xa;- name: String&#xa;- totalSeats: int&#xa;- rowsCount: int&#xa;- colsCount: int&#xa;--&#xa;+ getId(): Long&#xa;+ getName(): String" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#F1F5F9;strokeColor=#475569;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="180" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Performance -->
+        <mxCell id="c_performance" value="Performance&#xa;--&#xa;- id: Long&#xa;- title: String&#xa;- author: String&#xa;- description: String&#xa;- genre: String&#xa;- dateTime: LocalDateTime&#xa;- basePrice: BigDecimal&#xa;- hall: TheaterHall&#xa;- seats: List&lt;PerformanceSeat&gt;&#xa;--&#xa;+ getId(): Long&#xa;+ getTitle(): String&#xa;+ getAvailableSeatsCount(): int" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#EFF6FF;strokeColor=#2563EB;" vertex="1" parent="1">
+          <mxGeometry x="280" y="60" width="220" height="230" as="geometry" />
+        </mxCell>
+
+        <!-- PerformanceSeat -->
+        <mxCell id="c_seat" value="PerformanceSeat&#xa;--&#xa;- id: Long&#xa;- performance: Performance&#xa;- rowNumber: int&#xa;- seatNumber: int&#xa;- sector: Sector [ZSOLLYE, ERKELY, PAHOLY]&#xa;- priceMultiplier: double&#xa;- status: SeatStatus [FREE, RESERVED, SOLD]&#xa;- version: Long&#xa;--&#xa;+ calculatePrice(): BigDecimal&#xa;+ isAvailable(): boolean&#xa;+ markSold(): void" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#EFF6FF;strokeColor=#2563EB;" vertex="1" parent="1">
+          <mxGeometry x="580" y="60" width="260" height="230" as="geometry" />
+        </mxCell>
+
+        <!-- Booking -->
+        <mxCell id="c_booking" value="Booking&#xa;--&#xa;- id: Long&#xa;- bookingCode: String&#xa;- customerName: String&#xa;- customerEmail: String&#xa;- customerPhone: String&#xa;- bookingTime: LocalDateTime&#xa;- totalAmount: BigDecimal&#xa;- status: BookingStatus&#xa;- tickets: List&lt;Ticket&gt;&#xa;--&#xa;+ getBookingCode(): String&#xa;+ cancel(): void" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#FEF2F2;strokeColor=#DC2626;" vertex="1" parent="1">
+          <mxGeometry x="280" y="380" width="220" height="220" as="geometry" />
+        </mxCell>
+
+        <!-- Ticket -->
+        <mxCell id="c_ticket" value="Ticket&#xa;--&#xa;- id: Long&#xa;- ticketCode: String&#xa;- performanceSeat: PerformanceSeat&#xa;- booking: Booking&#xa;- price: BigDecimal&#xa;- issueTime: LocalDateTime&#xa;--&#xa;+ getTicketCode(): String&#xa;+ getSeatLabel(): String" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#FEF2F2;strokeColor=#DC2626;" vertex="1" parent="1">
+          <mxGeometry x="600" y="380" width="220" height="190" as="geometry" />
+        </mxCell>
+
+        <!-- Services -->
+        <mxCell id="c_perf_service" value="&amp;lt;&amp;lt;Service&amp;gt;&amp;gt;&#xa;PerformanceService&#xa;--&#xa;+ findAll(): List&lt;Performance&gt;&#xa;+ findById(id: Long): Performance&#xa;+ search(keyword, genre, date): List&lt;Performance&gt;&#xa;+ createPerformance(dto): Performance" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#F0FDF4;strokeColor=#16A34A;" vertex="1" parent="1">
+          <mxGeometry x="880" y="60" width="260" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c_book_service" value="&amp;lt;&amp;lt;Service&amp;gt;&amp;gt;&#xa;BookingService&#xa;--&#xa;+ createBooking(req: BookingRequest): Booking&#xa;+ cancelBooking(code, email): boolean&#xa;+ getBookingByCode(code): Booking&#xa;+ getStatistics(): DashboardStatsDto" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fillColor=#F0FDF4;strokeColor=#16A34A;" vertex="1" parent="1">
+          <mxGeometry x="880" y="380" width="260" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Associations -->
+        <!-- TheaterHall (1) -> (0..*) Performance -->
+        <mxCell id="a1" value="1        0..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endSize=8;strokeColor=#475569;strokeWidth=1.5;" edge="1" parent="1" source="c_hall" target="c_performance">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Performance (1) -> (1..*) PerformanceSeat -->
+        <mxCell id="a2" value="1        1..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamond;endFill=1;strokeColor=#2563EB;strokeWidth=1.5;" edge="1" parent="1" source="c_performance" target="c_seat">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Booking (1) -> (1..*) Ticket -->
+        <mxCell id="a3" value="1        1..*" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=diamond;endFill=1;strokeColor=#DC2626;strokeWidth=1.5;" edge="1" parent="1" source="c_booking" target="c_ticket">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- PerformanceSeat (1) -> (0..1) Ticket -->
+        <mxCell id="a4" value="1        0..1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=open;endSize=8;strokeColor=#DC2626;strokeWidth=1.5;" edge="1" parent="1" source="c_seat" target="c_ticket">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

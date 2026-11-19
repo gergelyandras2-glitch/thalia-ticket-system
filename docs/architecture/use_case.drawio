@@ -1,0 +1,101 @@
+<mxfile host="app.diagrams.net" modified="2026-11-17T12:00:00.000Z" agent="Mozilla/5.0" version="24.0.0">
+  <diagram id="usecase-diagram" name="Szinhaz Jegyrendszer Use Case Diagram">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- System Boundary -->
+        <mxCell id="sys_box" value="Színházi Jegyértékesítő Rendszer (ThaliaTickets)" style="shape=rect;html=1;verticalAlign=top;fontStyle=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#475569;strokeWidth=2;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="220" y="40" width="700" height="740" as="geometry" />
+        </mxCell>
+
+        <!-- Actors -->
+        <mxCell id="actor_user" value="Színházlátogató /&#xa;Jegyvásárló" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#DBEAFE;strokeColor=#1E40AF;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="240" width="60" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="actor_admin" value="Színházi&#xa;Adminisztrátor" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#FEF3C7;strokeColor=#D97706;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="240" width="60" height="120" as="geometry" />
+        </mxCell>
+
+        <mxCell id="actor_payment" value="Fizetési Rendszer&#xa;(Payment Gateway)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#DCFCE7;strokeColor=#166534;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="520" width="60" height="120" as="geometry" />
+        </mxCell>
+
+        <!-- Use Cases -->
+        <mxCell id="uc_browse" value="UC1: Előadások böngészése és keresése" style="ellipse;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="90" width="230" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="uc_details" value="UC2: Előadás adatlap megtekintése" style="ellipse;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="180" width="230" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="uc_seat_select" value="UC3: Nézőtéri székek kiválasztása" style="ellipse;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="270" width="230" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="uc_purchase" value="UC4: Jegyvásárlás és tranzakció" style="ellipse;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="370" width="230" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="uc_eticket" value="UC5: E-jegy letöltése / megtekintése" style="ellipse;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="370" width="230" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="uc_refund" value="UC6: Jegy lemondása / visszaváltása" style="ellipse;whiteSpace=wrap;html=1;fillColor=#EFF6FF;strokeColor=#3B82F6;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="480" width="230" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="uc_manage_shows" value="UC7: Előadások kezelése és meghirdetése" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#F59E0B;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="110" width="250" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="uc_stats" value="UC8: Értékesítési statisztikák megtekintése" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFBEB;strokeColor=#F59E0B;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="210" width="250" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="uc_payment_proc" value="UC9: Online fizetés feldolgozása" style="ellipse;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#22C55E;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="450" y="600" width="230" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Connections for User -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E40AF;strokeWidth=1.5;" edge="1" parent="1" source="actor_user" target="uc_browse">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E40AF;strokeWidth=1.5;" edge="1" parent="1" source="actor_user" target="uc_details">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E40AF;strokeWidth=1.5;" edge="1" parent="1" source="actor_user" target="uc_seat_select">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E40AF;strokeWidth=1.5;" edge="1" parent="1" source="actor_user" target="uc_purchase">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1E40AF;strokeWidth=1.5;" edge="1" parent="1" source="actor_user" target="uc_refund">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Connections for Admin -->
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=1.5;" edge="1" parent="1" source="actor_admin" target="uc_manage_shows">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D97706;strokeWidth=1.5;" edge="1" parent="1" source="actor_admin" target="uc_stats">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Include / Extend relationships -->
+        <mxCell id="e8" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeColor=#475569;strokeWidth=1.5;" edge="1" parent="1" source="uc_purchase" target="uc_eticket">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeColor=#475569;strokeWidth=1.5;" edge="1" parent="1" source="uc_purchase" target="uc_payment_proc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#166534;strokeWidth=1.5;" edge="1" parent="1" source="actor_payment" target="uc_payment_proc">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

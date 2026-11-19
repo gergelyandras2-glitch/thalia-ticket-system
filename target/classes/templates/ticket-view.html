@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: html-head('Digitális E-jegy')}"></head>
+<body style="background: #f1f5f9;">
+
+<header th:replace="~{fragments :: navbar}" class="no-print"></header>
+
+<main class="container">
+
+    <div class="no-print" style="max-width: 650px; margin: 0 auto 1.5rem auto; display: flex; justify-content: space-between; align-items: center;">
+        <a th:href="@{/bookings/success?code={c}(c=${booking.bookingCode})}" class="btn btn-outline">&larr; Vissza a rendeléshez</a>
+        <button onclick="window.print()" class="btn btn-gold">🖨️ Jegy Nyomtatása / PDF Mentés</button>
+    </div>
+
+    <!-- Authentic Theater Ticket Card -->
+    <div class="ticket-wrapper">
+        <div class="ticket-card">
+
+            <div class="ticket-header">
+                <div>
+                    <h2>Thália Nemzeti Színház</h2>
+                    <p style="font-size: 0.8rem; color: #fef08a; letter-spacing: 2px; text-transform: uppercase;">Hivatalos Elektronikus Belépőjegy</p>
+                </div>
+                <div style="font-size: 2.5rem;">🎭</div>
+            </div>
+
+            <div class="ticket-body">
+
+                <div style="border-bottom: 2px solid #f1f5f9; padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+                    <span style="color: var(--primary); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;" th:text="${performance.author}">Szerző</span>
+                    <h1 style="font-family: var(--font-serif); font-size: 2rem; color: #0f172a; margin-top: 0.25rem;" th:text="${performance.title}">Előadás Címe</h1>
+                </div>
+
+                <div class="ticket-grid">
+                    <div class="ticket-field">
+                        <label>📅 Dátum és Kezdés</label>
+                        <p th:text="${performance.getFormattedDate()}">2026. November 20. 19:00</p>
+                    </div>
+
+                    <div class="ticket-field">
+                        <label>🏛️ Játszóhelyszín / Terem</label>
+                        <p th:text="${performance.hall.name}">Nagyszínpad</p>
+                    </div>
+
+                    <div class="ticket-field">
+                        <label>📍 Szektor</label>
+                        <p style="color: #831843;" th:text="${seat.sector.displayName}">Zsöllye</p>
+                    </div>
+
+                    <div class="ticket-field">
+                        <label>🪑 Ülőhely</label>
+                        <p th:text="${seat.rowNumber} + '. sor ' + ${seat.seatNumber} + '. szék'">3. sor 12. szék</p>
+                    </div>
+
+                    <div class="ticket-field">
+                        <label>👤 Jegy Tulajdonos</label>
+                        <p th:text="${booking.customerName}">Kovács János</p>
+                    </div>
+
+                    <div class="ticket-field">
+                        <label>💰 Jegyár</label>
+                        <p th:text="${#numbers.formatDecimal(ticket.price, 0, 'POINT', 0, 'COMMA')} + ' Ft'">4 500 Ft</p>
+                    </div>
+                </div>
+
+                <div class="ticket-barcode-section">
+                    <div>
+                        <div class="barcode-mock">||| | |||| | ||||| || |</div>
+                        <div style="font-family: 'Consolas', monospace; font-size: 0.85rem; color: #64748b; margin-top: 0.25rem;">
+                            Jegykód: <strong th:text="${ticket.ticketCode}">TKT-2026-ABCD1234</strong>
+                        </div>
+                        <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem;">
+                            Foglalás: <span th:text="${booking.bookingCode}"></span> | Kiállítva: <span th:text="${ticket.getFormattedIssueTime()}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Visual SVG QR Code Mock -->
+                    <div style="text-align: center;">
+                        <svg width="80" height="80" viewBox="0 0 100 100" style="background: white; padding: 4px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                            <rect width="100" height="100" fill="white" />
+                            <!-- Corner markers -->
+                            <rect x="5" y="5" width="25" height="25" fill="#0f172a" />
+                            <rect x="9" y="9" width="17" height="17" fill="white" />
+                            <rect x="13" y="13" width="9" height="9" fill="#0f172a" />
+
+                            <rect x="70" y="5" width="25" height="25" fill="#0f172a" />
+                            <rect x="74" y="9" width="17" height="17" fill="white" />
+                            <rect x="78" y="13" width="9" height="9" fill="#0f172a" />
+
+                            <rect x="5" y="70" width="25" height="25" fill="#0f172a" />
+                            <rect x="9" y="74" width="17" height="17" fill="white" />
+                            <rect x="13" y="78" width="9" height="9" fill="#0f172a" />
+
+                            <!-- Data cells -->
+                            <rect x="40" y="10" width="8" height="8" fill="#0f172a" />
+                            <rect x="52" y="15" width="8" height="8" fill="#0f172a" />
+                            <rect x="35" y="35" width="12" height="12" fill="#0f172a" />
+                            <rect x="55" y="40" width="10" height="10" fill="#0f172a" />
+                            <rect x="75" y="45" width="8" height="8" fill="#0f172a" />
+                            <rect x="40" y="65" width="10" height="10" fill="#0f172a" />
+                            <rect x="60" y="75" width="15" height="15" fill="#0f172a" />
+                        </svg>
+                        <div style="font-size: 0.7rem; color: #94a3b8; margin-top: 2px;">Beolvasható QR</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; font-size: 0.75rem; color: #94a3b8; text-align: center; border-top: 1px solid #f1f5f9; padding-top: 1rem;">
+                    Kérjük, érkezzen az előadás előtt legalább 20 perccel! A belépőjegyet kinyomtatva vagy okostelefon képernyőjén is bemutathatja a beléptető kapuknál.
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+<footer th:replace="~{fragments :: footer}" class="no-print"></footer>
+
+</body>
+</html>
